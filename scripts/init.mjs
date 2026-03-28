@@ -96,12 +96,12 @@ function computeInstallFingerprint(packageFile) {
 
 function readSavedFingerprint() {
   if (!existsSync(stateFile)) {
-    return null;
+    return {};
   }
 
   try {
     const content = JSON.parse(readFileSync(stateFile, "utf8"));
-    return content.fingerprints ?? {};
+    return content?.fingerprints && typeof content.fingerprints === "object" ? content.fingerprints : {};
   } catch {
     return {};
   }
