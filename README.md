@@ -44,10 +44,12 @@ Monorepo for a ports data pipeline and dashboard:
 
 ## Prerequisites
 
-- Node.js and npm
-- Docker Desktop or Docker Engine with Docker Compose support
+- Node.js 20+ and npm
+- Docker Desktop or Docker Engine
+- Docker Compose support (`docker compose`)
 
-Docker is required for local PostgreSQL and pgWeb.
+Node.js is required to install dependencies and run the frontend, backend, ETL, and infrastructure tooling.
+Docker is required for the local PostgreSQL and pgWeb services used by `npm run setup` and `npm run init`.
 
 ## Local services
 
