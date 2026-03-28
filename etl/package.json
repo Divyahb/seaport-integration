@@ -1,0 +1,25 @@
+{
+  "name": "etl",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/index.ts",
+    "debug": "node --inspect=9230 --import tsx src/index.ts",
+    "test": "node --test --experimental-strip-types src/**/*.test.ts"
+  },
+  "dependencies": {
+    "@azure/storage-blob": "^12.27.0",
+    "@types/aws-lambda": "^8.10.147",
+    "ajv": "^8.17.1",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.2",
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

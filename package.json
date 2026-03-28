@@ -1,0 +1,24 @@
+{
+  "name": "searport",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "setup": "node scripts/init.mjs setup",
+    "init": "node scripts/init.mjs start",
+    "db:ui": "npm run local:db:ui",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:etl": "npm --prefix etl run dev",
+    "dev": "concurrently -n frontend,backend,etl \"npm --prefix frontend run dev\" \"npm --prefix backend run dev\" \"npm --prefix etl run dev\"",
+    "build": "concurrently -n frontend,backend,etl,infra \"npm --prefix frontend run build\" \"npm --prefix backend run build\" \"npm --prefix etl run build\" \"npm --prefix infra run build\"",
+    "test": "concurrently -n backend,etl \"npm --prefix backend run test\" \"npm --prefix etl run test\"",
+    "local:db": "docker compose -f docker-compose.local.yml up -d postgres",
+    "local:db:ui": "docker compose -f docker-compose.local.yml up -d pgweb",
+    "local:db:all": "docker compose -f docker-compose.local.yml up -d postgres pgweb",
+    "local:down": "docker compose -f docker-compose.local.yml down",
+    "local:start": "npm run local:db && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

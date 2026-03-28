@@ -1,0 +1,18 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Port {
+  countryIso: String
+  id: ID!
+  latitude: Float!
+  locode: String!
+  longitude: Float!
+  portName: String!
+  timezoneOlson: String
+}
+
+type Query {
+  port(locode: String!): Port
+  ports: [Port!]!
+}
