@@ -79,18 +79,19 @@ Current examples:
 ### Root
 
 ```sh
-npm run setup
-```
-
-Installs dependencies when package manifests changed, starts local Postgres, and generates the Prisma client.
-
-```sh
 npm run init
 ```
 
 Runs setup, then starts frontend, backend, and ETL together.
 
 Before running this command, update `etl/.env.local` and set `AZURE_CONTAINER_URL` to the value provided in the challenge document. The real container URL has not been pushed to the repository for security reasons.
+
+
+```sh
+npm run setup
+```
+
+Installs dependencies when package manifests changed, starts local Postgres, and generates the Prisma client.
 
 ```sh
 npm run dev
