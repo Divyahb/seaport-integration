@@ -4,65 +4,19 @@ import { getConfig } from "../config";
 import { extractPortsFromWorkbook } from "../extract";
 import { loadPorts } from "../load";
 import { validatePorts } from "../validation";
+import { runEtl, type EtlDependencies, type EtlEvent } from "./run-etl";
 
-type EtlEvent = {
-  containerUrl?: string;
+const defaultDependencies: EtlDependencies = {
+  getConfig,
+  listContainerBlobs,
+  downloadBlobBuffer,
+  extractPortsFromWorkbook,
+  validatePorts,
+  loadPorts
 };
 
-export const handler: Handler<EtlEvent> = async (event = {}) => {
-  const config = getConfig(event);
-  const blobs = await listContainerBlobs(config.containerUrl);
-  const workbookBlobs = blobs.filter((blob) => /\.xlsx?$/i.test(blob.name));
-  let totalValidRows = 0;
-  let totalInserted = 0;
-  let totalUpdated = 0;
-  const processedBlobs: string[] = [];
-  const failedBlobs: Array<{ blobName: string; error: string }> = [];
-  const validationErrors: Array<{ blobName: string; errors: string[] }> = [];
+export function runEtlWithRealDependencies(event: EtlEvent) {
+  return runEtl(event, defaultDependencies);
+}
 
-  for (const blob of workbookBlobs) {
-    try {
-      const workbookBuffer = await downloadBlobBuffer(config.containerUrl, blob.name);
-      const extractedRows = await extractPortsFromWorkbook(workbookBuffer);
-      const { validRows, errors } = validatePorts(extractedRows);
-      console.log("valid rows:", validRows.length)
-      console.log("invalid rows:", errors.length)
-
-      if (errors.length > 0) {
-        validationErrors.push({
-          blobName: blob.name,
-          errors
-        });
-      }
-
-      if (validRows.length === 0) {
-        processedBlobs.push(blob.name);
-        continue;
-      }
-
-      const summary = await loadPorts(config.databaseUrl, validRows);
-      totalValidRows += validRows.length;
-      totalInserted += summary.inserted;
-      totalUpdated += summary.updated;
-      processedBlobs.push(blob.name);
-    } catch (error) {
-      failedBlobs.push({
-        blobName: blob.name,
-        error: error instanceof Error ? error.message : String(error)
-      });
-    }
-  }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: failedBlobs.length > 0 || validationErrors.length > 0 ? "Ports loaded with errors" : "Ports loaded successfully.",
-      recordCount: totalValidRows,
-      inserted: totalInserted,
-      updated: totalUpdated,
-      processedBlobs,
-      failedBlobs,
-      validationErrors
-    })
-  };
-};
+export const handler: Handler<EtlEvent> = (event = {}) => runEtlWithRealDependencies(event);
