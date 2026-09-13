@@ -14,11 +14,13 @@ type Port = {
 export class PortService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async listPorts(): Promise<Port[]> {
+  async listPorts(options?: { limit?: number; offset?: number }): Promise<Port[]> {
     return this.prisma.port.findMany({
       orderBy: {
         portName: "asc"
-      }
+      },
+      take: options?.limit,
+      skip: options?.offset
     });
   }
 

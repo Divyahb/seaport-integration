@@ -14,5 +14,5 @@ type Port {
 
 type Query {
   port(locode: String!): Port
-  ports: [Port!]!
+  ports(limit: Int, offset: Int): [Port!]!
 }
