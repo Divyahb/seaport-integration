@@ -17,42 +17,51 @@ export const handler: Handler<EtlEvent> = async (event = {}) => {
   let totalInserted = 0;
   let totalUpdated = 0;
   const processedBlobs: string[] = [];
+  const failedBlobs: Array<{ blobName: string; error: string }> = [];
   const validationErrors: Array<{ blobName: string; errors: string[] }> = [];
 
   for (const blob of workbookBlobs) {
-    const workbookBuffer = await downloadBlobBuffer(config.containerUrl, blob.name);
-    const extractedRows = await extractPortsFromWorkbook(workbookBuffer);
-    const { validRows, errors } = validatePorts(extractedRows);
-    console.log("valid rows:", validRows.length)
-    console.log("invalid rows:", errors.length)
+    try {
+      const workbookBuffer = await downloadBlobBuffer(config.containerUrl, blob.name);
+      const extractedRows = await extractPortsFromWorkbook(workbookBuffer);
+      const { validRows, errors } = validatePorts(extractedRows);
+      console.log("valid rows:", validRows.length)
+      console.log("invalid rows:", errors.length)
 
-    if (errors.length > 0) {
-      validationErrors.push({
+      if (errors.length > 0) {
+        validationErrors.push({
+          blobName: blob.name,
+          errors
+        });
+      }
+
+      if (validRows.length === 0) {
+        processedBlobs.push(blob.name);
+        continue;
+      }
+
+      const summary = await loadPorts(config.databaseUrl, validRows);
+      totalValidRows += validRows.length;
+      totalInserted += summary.inserted;
+      totalUpdated += summary.updated;
+      processedBlobs.push(blob.name);
+    } catch (error) {
+      failedBlobs.push({
         blobName: blob.name,
-        errors
+        error: error instanceof Error ? error.message : String(error)
       });
     }
-
-    if (validRows.length === 0) {
-      processedBlobs.push(blob.name);
-      continue;
-    }
-
-    const summary = await loadPorts(config.databaseUrl, validRows);
-    totalValidRows += validRows.length;
-    totalInserted += summary.inserted;
-    totalUpdated += summary.updated;
-    processedBlobs.push(blob.name);
   }
 
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: validationErrors.length > 0 ? "Ports loaded with errors" : "Ports loaded successfully.",
+      message: failedBlobs.length > 0 || validationErrors.length > 0 ? "Ports loaded with errors" : "Ports loaded successfully.",
       recordCount: totalValidRows,
       inserted: totalInserted,
       updated: totalUpdated,
       processedBlobs,
+      failedBlobs,
       validationErrors
     })
   };

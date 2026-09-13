@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { validatePorts } from "./validation";
+import { validatePorts } from "./validation.ts";
 
 test("validatePorts returns valid rows", () => {
   const result = validatePorts([

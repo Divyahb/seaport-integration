@@ -55,7 +55,7 @@ export class SearportStack extends cdk.Stack {
 
     const etlLambda = new lambda.Function(this, "SearportEtlLambda", {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: "index.handler",
+      handler: "lambda/handler.handler",
       code: lambda.Code.fromAsset("../etl/dist"),
       timeout: cdk.Duration.minutes(1),
       memorySize: 512,
