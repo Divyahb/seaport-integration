@@ -1,13 +1,12 @@
 import { config as loadEnv } from "dotenv";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import { handler } from "./lambda/handler";
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
+loadEnv({ path: resolve(__dirname, "..", ".env.local") });
 
-loadEnv({ path: resolve(currentDir, "..", ".env.local") });
+type LocalEtlHandler = (event: { containerUrl?: string }) => Promise<unknown>;
 
-void handler({
+void (handler as LocalEtlHandler)({
   containerUrl: process.env.AZURE_CONTAINER_URL
 }).then((result) => {
   console.log(JSON.stringify(result));
