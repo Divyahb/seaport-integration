@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import ExcelJS from "exceljs";
-import { extractPortsFromWorkbook } from "./extract";
+import { extractPortsFromWorkbook } from "./extract.ts";
 
 async function buildWorkbookBuffer(rows: Array<Array<string | number | null | undefined>>) {
   const workbook = new ExcelJS.Workbook();
