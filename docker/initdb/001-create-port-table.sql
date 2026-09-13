@@ -1,5 +1,3 @@
-create extension if not exists pgcrypto;
-
 create table if not exists "Port" (
   "id" text primary key,
   "portName" text not null,
