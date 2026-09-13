@@ -1,14 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import type { Port } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
-
-type Port = {
-  portName: string,
-  locode: string,
-  latitude: number,
-  longitude: number,
-  timezoneOlson?: string | null,
-  countryIso?: string | null
-}
 
 @Injectable()
 export class PortService {
