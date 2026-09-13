@@ -6,4 +6,8 @@ coverage
 docker/postgres-data/
 docker/pgadmin-data/
 .cache
+.env.local
+.env.production
+!.env.local.example
+!.env.production.example
 
