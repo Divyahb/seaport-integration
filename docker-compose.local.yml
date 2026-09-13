@@ -21,7 +21,7 @@ services:
 
   pgweb:
     image: sosedoff/pgweb:0.16.2
-    container_name: tilla-pgweb
+    container_name: searport-pgweb
     restart: unless-stopped
     depends_on:
       postgres:
